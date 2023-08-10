@@ -19,7 +19,7 @@
                     <div class="input-group-append">
                         <span class="input-group-text">用車的種類</span>
                     </div>
-                        <input type="text" class="form-control" id="kind" placeholder="種類">
+                        <input type="text" class="form-control" id="kind" placeholder="種類" required>
                     <select class="form-control" onchange="select_car_record_kind(this.value)">
                         <option></option>
                         {% for val in kind %}
@@ -42,14 +42,14 @@
                     <div class="input-group-append">
                         <span class="input-group-text">入庫里程數</span>
                     </div>
-                        <input type="text" class="form-control" id="go_home_km" placeholder="入庫里程數">
+                        <input type="text" class="form-control" id="go_home_km" placeholder="入庫里程數" required>
                     <div class="input-group-append">
                         <span class="input-group-text">KM</span>
                     </div>
                 </div>
                 <div class="input-group">
                     <!-- content -->
-                    <input type="text" class="form-control" id="destination" placeholder="內容"/>
+                    <input type="text" class="form-control" id="destination" placeholder="內容" required>
                     <!-- user -->
                     <input type="hidden" id="user" value="{{ user }}" />
                 </div>

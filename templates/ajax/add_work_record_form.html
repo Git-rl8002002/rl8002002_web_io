@@ -17,8 +17,8 @@
                 </div>
                 <div class="input-group">
                     <!-- kind -->
-                    <input type="text" class="form-control" id="kind" placeholder="種類">
-                    <select class="form-control" onchange="select_money_record_kind(this.value)">
+                    <input type="text" class="form-control" id="kind" placeholder="種類" required>
+                    <select class="form-control" onchange="select_money_record_kind(this.value)" required>
                         <option></option>
                         {% for val in kind %}
                         <option value="{{ val[0] }}">{{ val[0] }}</option>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="input-group">
                     <!-- title --> 
-                    <input type="text" class="form-control" id="title" placeholder="標體">
+                    <input type="text" class="form-control" id="title" placeholder="標體" required>
                     <div class="input-group-append">
                         <span class="input-group-text">類</span>
                     </div>
