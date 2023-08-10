@@ -10,7 +10,7 @@ from argparse import Namespace
 from dataclasses import dataclass
 from email import charset
 from hashlib import md5
-import hashlib , time , logging , random
+import hashlib , time , logging , random , calendar
 from tabnanny import check
 from flask import Flask,render_template,request,session,url_for,redirect,escape,abort,jsonify
 from flask_socketio import SocketIO , emit 
@@ -34,6 +34,94 @@ logging.basicConfig(format=log_format , level=logging.INFO , datefmt="%Y-%m-%d %
 ver     = web_cloud_dao.param['ver']
 title   = web_cloud_dao.param['title']
 content = web_cloud_dao.param['content']
+
+#############
+# calendar
+#############
+@app.route('/calendar' , methods=['POST','GET'])
+def show_calendar():
+    if request.method == "POST":
+       
+        now_year = time.strftime("%Y" , time.localtime())
+        now_month = time.strftime("%m" , time.localtime())
+        c_year = request.form['year']
+        c_month = request.form['month']
+        cal = calendar.monthcalendar(int(c_year), int(c_month))
+        month_name = calendar.month_name[int(c_month)]
+        #cal.append(cal.pop(0))
+
+        # 將1號移到第一行
+        #first_week = cal.pop(0)
+        #cal.insert(1, first_week)
+
+        # 處理大月減少一天，將大月的最後一天移到最後面
+        big_months = {1, 3, 5, 7, 8, 10, 12}
+        last_day = 31 if c_month in big_months else 30
+        if c_month == 2:  # 2月特別處理閏年
+            if calendar.isleap(c_year):
+                last_day = 29
+            else:
+                last_day = 28         
+        
+         # 將所有日期往後退一天
+        c_month = int(c_month)
+        for week in cal:
+            for i in range(len(week)):
+                if week[i] != 0:
+                    week[i] = week[i] - 1
+                    if week[i] == 0:  # 处理月初退到上个月的情况
+                        if c_month == 1:  # 如果是1月，年份和月份都要改变
+                            c_year -= 1
+                            c_month = 12
+                        else:
+                            c_month -= 1
+                        _, last_day = calendar.monthrange(int(c_year), int(c_month))
+                        week[i] = last_day  # 设置为上个月的最后一天
+            if week[6] == last_day:  # 如果最後一天是大月的最後一天，將其移到最後
+                week.append(week.pop(6))
+
+        return render_template('calendar.html', year=c_year, month=month_name, cal=cal , now_year=now_year , now_month=now_month)
+    else:
+        now_year = time.strftime("%Y" , time.localtime())
+        now_month = time.strftime("%m" , time.localtime())
+        c_year = time.strftime("%Y" , time.localtime())
+        c_month = time.strftime("%m" , time.localtime())
+
+        cal = calendar.monthcalendar(int(c_year), int(c_month))
+        month_name = calendar.month_name[int(c_month)]
+        #cal.append(cal.pop(0))
+
+        # 將1號移到第一行
+        #first_week = cal.pop(0)
+        #cal.insert(1, first_week)
+
+        # 處理大月減少一天，將大月的最後一天移到最後面
+        big_months = {1, 3, 5, 7, 8, 10, 12}
+        last_day = 31 if c_month in big_months else 30
+        if c_month == 2:  # 2月特別處理閏年
+            if calendar.isleap(c_year):
+                last_day = 29
+            else:
+                last_day = 28         
+
+        # 將所有日期往後退一天
+        c_month = int(c_month)
+        for week in cal:
+            for i in range(len(week)):
+                if week[i] != 0:
+                    week[i] = week[i] - 1
+                    if week[i] == 0:  # 处理月初退到上个月的情况
+                        if c_month == 1:  # 如果是1月，年份和月份都要改变
+                            c_year -= 1
+                            c_month = 12
+                        else:
+                            c_month -= 1
+                        _, last_day = calendar.monthrange(int(c_year), int(c_month))
+                        week[i] = last_day  # 设置为上个月的最后一天
+            if week[6] == last_day:  # 如果最後一天是大月的最後一天，將其移到最後
+                week.append(week.pop(6))
+
+        return render_template('calendar.html', year=c_year, month=month_name, cal=cal , now_year=now_year , now_month=now_month)
 
 
 ##########
